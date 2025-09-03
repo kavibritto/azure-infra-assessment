@@ -1,0 +1,51 @@
+@baseUrl = http://localhost:8080
+@json = application/json
+
+### Health
+# @name health
+GET {{baseUrl}}/healthz
+Accept: {{json}}
+
+### Create item
+# @name createItem
+POST {{baseUrl}}/api/v1/items
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "name": "Laptop Stand",
+  "description": "Aluminium",
+  "price": 1499.00
+}
+###
+@itemID = {{createItem.response.body.$.id}}
+
+### List items
+# @name listItems
+GET {{baseUrl}}/api/v1/items
+Accept: {{json}}
+
+### Get by ID (from previous Create)
+# @name getItem
+GET {{baseUrl}}/api/v1/items/{{itemID}}
+Accept: {{json}}
+
+### Update item (partial)
+# @name updateItem
+PUT {{baseUrl}}/api/v1/items/{{itemId}}
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "price": 1299.00
+}
+
+### Delete item
+# @name deleteItem
+DELETE {{baseUrl}}/api/v1/items/{{itemId}}
+Accept: */*
+
+### Verify deletion (expect 404)
+# @name getAfterDelete
+GET {{baseUrl}}/api/v1/items/{{itemId}}
+Accept: {{json}}
