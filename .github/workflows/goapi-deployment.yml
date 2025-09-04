@@ -40,6 +40,7 @@ jobs:
 
     - name: Build & Push Docker Image to ACR
       run: |
-        docker build -t ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}/go-api:${SHORT_SHA} .
-        docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}/go-api:${SHORT_SHA}
+        docker build -t ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/gopai:${SHORT_SHA} .
+        docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/gopai:${SHORT_SHA}
+        docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/gopai:latest
 
