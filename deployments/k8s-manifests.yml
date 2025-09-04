@@ -1,0 +1,72 @@
+# golang deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-api
+spec:
+  selector:
+    matchLabels:
+      app: go-api
+  template:
+    metadata:
+      labels:
+        app: go-api
+    spec:
+      containers:
+        - name: go-api
+          image: kavibritto.azurecr.io/gopai:latest # use the image built by Dockerfile
+          ports:
+            - containerPort: 8080
+---
+# golang service
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-api
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "false"
+    service.beta.kubernetes.io/azure-load-balancer-health-probe-request-path: "/healthz"
+    service.beta.kubernetes.io/azure-load-balancer-resource-group: "rg-sandbox-app"
+spec:
+  type: LoadBalancer
+  selector:
+    app: go-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+
+---
+# react-frontend app
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: react-frontend
+spec:
+  selector:
+    matchLabels:
+      app: react-frontend
+  template:
+    metadata:
+      labels:
+        app: react-frontend
+    spec:
+      containers:
+        - name: react-frontend
+          image: kavibritto.azurecr.io/react-frontend:latest # use the image built by Dockerfile
+          ports:
+            - containerPort: 80
+---
+# react-frontend service
+apiVersion: v1
+kind: Service
+metadata:
+  name: react-frontend
+spec:
+  type: LoadBalancer
+  selector:
+    app: react-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

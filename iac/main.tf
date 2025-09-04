@@ -44,6 +44,7 @@ module "data" {
   vnet_cidr           = "10.2.0.0/16"
   subnets = {
     snet-private = "10.2.0.0/24"
+    snet-public  = "10.2.1.0/24"
   }
   tags = {
     environment = "sandbox"
@@ -144,6 +145,7 @@ module "aks" {
   resource_group_name = "rg-sandbox-app"
   subnet_id           = module.app.subnet_ids["snet-private"] # your App-Spoke AKS subnet
 
+  acr_name = "kavibritto"
   # Networking (Azure CNI)
   network_plugin = "azure"
   network_policy = "azure"
@@ -169,36 +171,15 @@ module "aks" {
   }
 }
 
-module "databricks" {
-  source              = "./modules/databricks"
-  location = var.location
-  tags = { 
-    environment = "sandbox"
-    project     = "azure-infra-assessment"
-    terraform   = "true"
-   }
-vnet_resource_group_name     = "rg-sandbox-data"
-vnet_name                    = module.data.vnet_name
-existing_private_subnet_name = "snet-private"   # your current one
-
-create_public_subnet = true
-public_subnet_name   = "snet-dbx-public"
-public_subnet_cidr   = "10.2.2.0/24"
-# route tables (optional)
-# public_subnet_route_table_id  = ""
-# private_subnet_route_table_id = "/subscriptions/xxxx/resourceGroups/rg-data-network/providers/Microsoft.Network/routeTables/rt-default"
-
-workspace_rg_name            = "rg-sandbox-dbx"
-workspace_name               = "dbx-sandbox-ws"
-workspace_sku                = "premium"
-workspace_managed_rg_name    = "rg-sandbox-dbx-managed"
-public_network_access_enabled     = true
-infrastructure_encryption_enabled = false
-
-enable_private_link   = true
-private_dns_rg_name   = "rg-sandbox-hub"
-privatelink_subnet_id = module.data.subnet_ids["snet-private"]
-  
+module "databricks_workspace" {
+  source               = "./modules/databricks"
+  prefix               = "sandbox"
+  location             = "centralindia"
+  resource_group_name  = "rg-sandbox-data"
+  vnet_id              = module.data.vnet_id
+  vnet_name       = module.data.vnet_name
+  public_subnet_name   = "snet-dbx-public"
+  private_subnet_name  = "snet-dbx-private"
 }
 
 # -----------------------
@@ -215,3 +196,4 @@ module "demo_monitoring" {
   log_analytics_workspace_id = "test"
   alert_email               = "kavikg7@outlook.com"
 }
+

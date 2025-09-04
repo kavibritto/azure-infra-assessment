@@ -34,3 +34,8 @@ variable "tags" {
   type    = map(string)
   default = {}
 }
+
+variable "acr_name" {
+  type = string
+  
+}

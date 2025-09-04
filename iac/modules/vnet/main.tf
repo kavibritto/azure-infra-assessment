@@ -47,14 +47,14 @@ resource "azurerm_route_table" "this" {
 }
 
 # Routes
-resource "azurerm_route" "route" {
-  name                   = "DefaultRoute"
-  resource_group_name    = var.resource_group_name
-  route_table_name       = azurerm_route_table.this.name
-  address_prefix         = "0.0.0.0/0"
-  next_hop_type          = var.enable_nat ? "VirtualAppliance" : "Internet"
-  next_hop_in_ip_address = var.enable_nat ? azurerm_public_ip.nat_pip[0].ip_address : null
-}
+# resource "azurerm_route" "route" {
+#   name                   = "DefaultRoute"
+#   resource_group_name    = var.resource_group_name
+#   route_table_name       = azurerm_route_table.this.name
+#   address_prefix         = "0.0.0.0/0"
+#   next_hop_type          = var.enable_nat ? "VirtualAppliance" : "Internet"
+#   next_hop_in_ip_address = var.enable_nat ? azurerm_public_ip.nat_pip[0].ip_address : null
+# }
 
 # ------------------------
 # Route Table Association

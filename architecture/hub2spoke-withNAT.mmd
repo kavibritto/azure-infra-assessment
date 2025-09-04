@@ -1,0 +1,47 @@
+---
+config:
+    layout: elk
+    theme: default
+---
+graph TD
+  user(["Users"])
+  F[frontdoor CDN]
+  user --> F & APIGW 
+  internet([Internet])
+%%   internet -->|Supplier APIs| Supplier
+
+
+  subgraph Hub-VNet
+    
+    APIGW[api gateway/LB - api.example.com]
+    privateDNS[Private DNS Zones]
+    peKV[PE: Key Vault]
+    peADLS[PE: ADLS Gen2]
+    peSQL[PE: Azure SQL]
+    peDBX[PE: Databricks]
+  end
+
+  subgraph App-Spoke-VNet
+    NAT[NAT Gateway - static egress IP]
+    aks[AKS Cluster]
+  end
+
+  subgraph Data-Spoke-VNet
+    dbx[Databricks Workspace]
+    adls[ADLS Gen2]
+    sql[Azure SQL DB]
+  end
+
+  %% Peering
+  App-Spoke-VNet -->|VNet Peering| Hub-VNet
+  Data-Spoke-VNet -->|VNet Peering| Hub-VNet
+
+  %% Private Link paths via Hub
+  aks -->|CSI| peKV
+  aks -->|Trigger Jobs| peDBX
+  peDBX --> dbx
+  dbx -->|MI| adls
+  dbx --> sql
+
+  %% Internet egress from App Spoke
+  aks -->|0.0.0.0/0| NAT --> internet --> Supplier

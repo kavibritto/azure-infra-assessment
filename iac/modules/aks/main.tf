@@ -66,3 +66,20 @@ resource "azurerm_role_assignment" "kv_secrets_user" {
 #   to = azurerm_kubernetes_cluster.this
 #   id = "/subscriptions/267bb7a7-50eb-4c5b-81ee-4adc1b915849/resourceGroups/rg-sandbox-app/providers/Microsoft.ContainerService/managedClusters/aks-sandbox"
 # }
+data "azurerm_container_registry" "acr" {
+  name = var.acr_name
+  resource_group_name = "rg-containers"
+}
+resource "azurerm_role_assignment" "acr" {
+  scope                = data.azurerm_container_registry.acr.id
+  role_definition_name = "AcrPull"
+  principal_id         = azurerm_kubernetes_cluster.this.kubelet_identity[0].object_id
+
+  # depends_on = [time_sleep.wait_for_kubelet_identity]
+
+  # Avoid duplicate assignment flaps on re-apply
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes        = [scope, role_definition_name, principal_id]
+  }
+}

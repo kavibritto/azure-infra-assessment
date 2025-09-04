@@ -1,0 +1,40 @@
+graph TD
+  internet([Internet])
+  internet -->|GitHub Actions| ghauth[[GitHub OIDC Auth]]
+  ghauth --> azlogin[Azure Login via Federated Identity]
+
+  subgraph Hub-VNet
+  direction TB
+    bastion[Bastion - optional]
+    %% firewall[Azure Firewall - optional]
+    %% proxyHost[Proxy Host for Suppier API Calls]
+    privateDNS[Private DNS Zones]
+    peDBX[Private Endpoint: Databricks]
+    peKV[Private Endpoint: Key Vault]
+    peADLS[Private Endpoint: ADLS]
+    peSQL[Private Endpoint: SQL DB]
+
+  end
+
+  subgraph App-Spoke-VNet
+    NAT[NAT GW - internet access]
+    aks[AKS Cluster]
+    
+
+  end
+
+  subgraph Data-Spoke-VNet
+    dbx[Databricks Workspace]
+    adls[ADLS Gen2]
+    sql[Azure SQL DB]
+  end
+
+  aks -->|CSI Driver| peKV
+  aks -->|Trigger Jobs| peDBX
+  aks <--> NAT
+  peDBX --> dbx
+  dbx -->|Managed Identity| adls
+  dbx --> sql
+
+  App-Spoke-VNet -->|Peering| Hub-VNet
+  Data-Spoke-VNet -->|Peering| Hub-VNet
