@@ -19,7 +19,7 @@ cat > job.json <<EOF
 }
 EOF
 
-job_id=$(databricks jobs create --json job.json | jq -r .object_id)
+job_id=$(databricks jobs create --json @job.json | jq -r .job_id)
 echo "Job created with ID: $job_id"
 
 echo "Running job..."
