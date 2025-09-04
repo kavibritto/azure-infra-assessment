@@ -26,11 +26,21 @@ locals {
   }
 }
 
+# resource "azurerm_private_dns_zone_virtual_network_link" "links" {
+#   for_each              = local.link_matrix
+#   name                  = "${split("|", each.key)[1]}-${element(split("/", each.value.vnet_id), length(split("/", each.value.vnet_id)) - 1)}"
+#   resource_group_name   = var.resource_group_name
+#   private_dns_zone_name = azurerm_private_dns_zone.this[each.value.zone_key].name
+#   virtual_network_id    = each.value.vnet_id
+#   registration_enabled  = false
+# }
+
 resource "azurerm_private_dns_zone_virtual_network_link" "links" {
-  for_each              = local.link_matrix
-  name                  = "${split("|", each.key)[1]}-${element(split("/", each.value.vnet_id), length(split("/", each.value.vnet_id)) - 1)}"
+  for_each              = toset(var.private_dns_zones)
+  name                  = each.value
   resource_group_name   = var.resource_group_name
-  private_dns_zone_name = azurerm_private_dns_zone.this[each.value.zone_key].name
-  virtual_network_id    = each.value.vnet_id
+  private_dns_zone_name = azurerm_private_dns_zone.this[each.value].name
+  virtual_network_id    = var.vnet_link_ids[0]
   registration_enabled  = false
 }
+

@@ -11,8 +11,8 @@ terraform {
     resource_group_name  = "rg-tfstates"
     storage_account_name = "st24951tfstatekavi"   # or your SA from step 1
     container_name       = "tfstate"
-    key                  = "platform/infra.tfstate"
-
+    key                  = "platform/terraform.tfstate"
+    
   }
 }
 

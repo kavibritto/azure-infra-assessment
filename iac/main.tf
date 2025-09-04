@@ -19,6 +19,7 @@ module "hub" {
 
 # App Spoke Vnet
 module "app" {
+  depends_on = [ module.hub ]
   source              = "./modules/vnet"
   resource_group_name = "rg-sandbox-app"
   location            = var.location
@@ -37,6 +38,7 @@ module "app" {
 
 # Data Spoke Vnet
 module "data" {
+  depends_on = [ module.hub ]
   source              = "./modules/vnet"
   resource_group_name = "rg-sandbox-data"
   location            = "centralindia"
@@ -60,6 +62,7 @@ module "data" {
 # -----------------------
 
 module "private_zones" {
+  depends_on = [ module.hub, module.app, module.data ]
   source              = "./modules/hostedzone"
   resource_group_name = "rg-sandbox-hub"
   private_dns_zones = [
@@ -83,6 +86,7 @@ module "private_zones" {
 #
 # -----------------------
 module "kv" {
+
   source              = "./modules/keyvault"
   name                = "kv-sandbox-assesment"
   location            = var.location
@@ -102,6 +106,7 @@ module "kv" {
 # -----------------------
 
 module "private_endpoints" {
+  depends_on = [ module.hub, module.app, module.data ]
   source              = "./modules/private-endpoints"
   location            = var.location
   resource_group_name = "rg-sandbox-hub"
@@ -172,6 +177,7 @@ module "aks" {
 }
 
 module "databricks_workspace" {
+  depends_on = [ module.hub, module.app, module.data ]
   source               = "./modules/databricks"
   prefix               = "sandbox"
   location             = "centralindia"
@@ -188,6 +194,7 @@ module "databricks_workspace" {
 #
 # -----------------------
 module "demo_monitoring" {
+  depends_on = [ module.aks ]
   source                    = "./modules/monitoring"
   prefix                    = "sandbox"
   resource_group_name       = "rg-sandbox-app"

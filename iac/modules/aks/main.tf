@@ -12,7 +12,7 @@ resource "azurerm_kubernetes_cluster" "this" {
     max_pods                     = var.node_pool.max_pods
     os_disk_size_gb              = var.node_pool.os_disk_size_gb
     type                         = "VirtualMachineScaleSets"
-    vnet_subnet_id               = var.subnet_id
+    # vnet_subnet_id               = var.subnet_id
     only_critical_addons_enabled = false
   }
 
@@ -35,9 +35,9 @@ resource "azurerm_kubernetes_cluster" "this" {
     # dns_service_ip = var.dns_service_ip
 
     # Force egress via NAT GW (User Defined Routing on subnet)
-    outbound_type = "userDefinedRouting"
+    # outbound_type = "userDefinedRouting"
     # For Demo puposes, force egress via NAT GW
-    # outbound_type  = "managedNATGateway"
+    outbound_type  = "managedNATGateway"
   }
 
   api_server_access_profile {

@@ -7,6 +7,10 @@ jobs:
   build-and-push:
     name: Build and Push Docker Image to ACR
     runs-on: ubuntu-latest
+    permissions:
+    #   id-token: write is required for Azure Login with OIDC
+      id-token: write
+      contents: read
 
     defaults:
       run:

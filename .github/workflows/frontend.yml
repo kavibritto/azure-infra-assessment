@@ -6,6 +6,10 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    permissions:
+    #   id-token: write is required for Azure Login with OIDC
+      id-token: write
+      contents: read
 
     defaults:
       run:
