@@ -1,0 +1,152 @@
+---
+config:
+    theme: "default"
+    layout: "elk"
+---
+%%{init: {'flowchart': {'direction': 'RL'}} }%%
+flowchart RL
+
+%% module.aks
+subgraph module.aks
+  A1["data.azurerm_container_registry.acr"]
+  A2["azurerm_kubernetes_cluster.this"]
+  A3["azurerm_role_assignment.acr"]
+  A4["azurerm_role_assignment.kv_secrets_user"]
+end
+
+%% module.app
+subgraph module.app
+  B1["azurerm_nat_gateway.this"]
+  B2["azurerm_nat_gateway_public_ip_association.pip_assoc"]
+  B3["azurerm_public_ip.nat_pip"]
+  B4["azurerm_resource_group.this"]
+  B5["azurerm_route_table.this"]
+  B6["azurerm_subnet.this"]
+  B7["azurerm_subnet_nat_gateway_association.subnet_assoc"]
+  B8["azurerm_subnet_route_table_association.this"]
+  B9["azurerm_virtual_network.this"]
+end
+
+%% module.data
+subgraph module.data
+  C1["azurerm_nat_gateway.this"]
+  C2["azurerm_nat_gateway_public_ip_association.pip_assoc"]
+  C3["azurerm_public_ip.nat_pip"]
+  C4["azurerm_resource_group.this"]
+  C5["azurerm_route_table.this"]
+  C6["azurerm_subnet.this"]
+  C7["azurerm_subnet_nat_gateway_association.subnet_assoc"]
+  C8["azurerm_subnet_route_table_association.this"]
+  C9["azurerm_virtual_network.this"]
+end
+
+%% module.databricks_workspace
+subgraph module.databricks_workspace
+  D1["data.azurerm_virtual_network.this"]
+  D2["azurerm_databricks_workspace.this"]
+  D3["azurerm_network_security_group.this"]
+  D4["azurerm_subnet.private"]
+  D5["azurerm_subnet.public"]
+  D6["azurerm_subnet_network_security_group_association.private"]
+  D7["azurerm_subnet_network_security_group_association.public"]
+end
+
+%% module.demo_monitoring
+subgraph module.demo_monitoring
+  E1["azurerm_log_analytics_workspace.demo"]
+  E2["azurerm_monitor_action_group.demo"]
+  E3["azurerm_monitor_diagnostic_setting.aks"]
+  E4["azurerm_monitor_scheduled_query_rules_alert_v2.aks_nodes_not_ready"]
+end
+
+%% module.hub
+subgraph module.hub
+  F1["azurerm_nat_gateway.this"]
+  F2["azurerm_nat_gateway_public_ip_association.pip_assoc"]
+  F3["azurerm_public_ip.nat_pip"]
+  F4["azurerm_resource_group.this"]
+  F5["azurerm_route_table.this"]
+  F6["azurerm_subnet.this"]
+  F7["azurerm_subnet_nat_gateway_association.subnet_assoc"]
+  F8["azurerm_subnet_route_table_association.this"]
+  F9["azurerm_virtual_network.this"]
+end
+
+%% module.kv
+subgraph module.kv
+  G1["data.azurerm_client_config.current"]
+  G2["azurerm_key_vault.this"]
+end
+
+%% module.private_endpoints
+subgraph module.private_endpoints
+  H1["azurerm_private_endpoint.this"]
+end
+
+%% module.private_zones
+subgraph module.private_zones
+  I1["azurerm_private_dns_zone.this"]
+  I2["azurerm_private_dns_zone_virtual_network_link.links"]
+end
+
+%% Edges
+A2 --> B6
+A3 --> A1
+A3 --> A2
+A4 --> A2
+
+B2 --> B1
+B2 --> B3
+B5 --> B4
+B6 --> B9
+B7 --> B1
+B7 --> B6
+B8 --> B5
+B8 --> B6
+B9 --> B4
+
+C2 --> C1
+C2 --> C3
+C5 --> C4
+C6 --> C9
+C7 --> C1
+C7 --> C6
+C8 --> C5
+C8 --> C6
+C9 --> C4
+
+D1 --> C9
+D2 --> D6
+D2 --> D7
+D4 --> C9
+D5 --> C9
+D6 --> D3
+D6 --> D4
+D7 --> D3
+D7 --> D5
+
+E3 --> A2
+E3 --> E1
+E4 --> E1
+E4 --> E2
+
+F2 --> F1
+F2 --> F3
+F5 --> F4
+F6 --> F9
+F7 --> F1
+F7 --> F6
+F8 --> F5
+F8 --> F6
+F9 --> F4
+
+G2 --> G1
+
+H1 --> F6
+H1 --> G2
+H1 --> I1
+
+I2 --> B9
+I2 --> C9
+I2 --> F9
+I2 --> I1

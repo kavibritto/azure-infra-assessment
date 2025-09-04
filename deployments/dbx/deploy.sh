@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-echo "Deploying infra..."
-terraform init && terraform apply -auto-approve
 
 echo "Uploading notebook..."
 databricks workspace import  /Workspace/Users/kavikg7@outlook.com/demo_etl-1.py --file deployments/dbx/demo-etl.py --language PYTHON --overwrite --debug

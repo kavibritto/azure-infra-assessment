@@ -19,4 +19,4 @@ jobs:
           databricks configure --host "$DATABRICKS_HOST" --token "$DATABRICKS_TOKEN"
 
       - name: Deploy Infra + Run
-        run: ./deploy.sh
+        run: deployments/dbx/deploy.sh
