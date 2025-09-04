@@ -6,6 +6,10 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
     steps:
       - uses: actions/checkout@v3
 
@@ -23,3 +27,4 @@ jobs:
 
       - name: Deploy Infra + Run
         run: bash deployments/dbx/deploy.sh
+
