@@ -23,6 +23,6 @@ job_id=$(databricks jobs create --json job.json | jq -r .job_id)
 echo "Job created with ID: $job_id"
 
 echo "Running job..."
-databricks jobs run-now --job-id "$job_id"
+databricks jobs run-now "$job_id"
 
 echo "Done!"
