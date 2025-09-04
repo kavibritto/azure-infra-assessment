@@ -22,4 +22,4 @@ jobs:
           DATABRICKS_TOKEN: "${{ secrets.DATABRICKS_TOKEN }}"
 
       - name: Deploy Infra + Run
-        run: deployments/dbx/deploy.sh
+        run: bash deployments/dbx/deploy.sh
