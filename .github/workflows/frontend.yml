@@ -31,15 +31,12 @@ jobs:
 
     - name: Login to ACR 
       run: |
-        az acr login --name ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }} --expose-token --output tsv --query accessToken > acr_token.txt
-        cat acr_token.txt | docker login ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io \
-          --username 00000000-0000-0000-0000-000000000000 \
-          --password-stdin
+        az acr login --name ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}
 
     - name: Extract short SHA
       run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
 
     - name: Build & Push Docker image to ACR
       run: |
-        docker build -t ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}/react-app:${SHORT_SHA} .
-        docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}/react-app:${SHORT_SHA}
+        docker build -t ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/react-app:${SHORT_SHA} .
+        docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/react-app:${SHORT_SHA}
